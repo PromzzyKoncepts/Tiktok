@@ -63,3 +63,10 @@ export interface Comment {
 export interface MenuItemFollowCompTypes {
   user: RandomUsers;
 }
+
+
+
+export interface UploadError {
+  type:string,
+  message:string,
+}
