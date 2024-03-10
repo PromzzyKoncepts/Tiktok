@@ -7,6 +7,7 @@ import Link from "next/link";
 import { profile } from "console";
 import { ImMusic } from "react-icons/im";
 import { AiFillHeart } from "react-icons/ai";
+import PostMainLikes from "./PostMainLikes";
 
 export default function PostMain({ post }: postMainCompTypes) {
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function PostMain({ post }: postMainCompTypes) {
       `video-${post?.id}`
     ) as HTMLVideoElement;
     const postMainElement = document.getElementById(`PostMain-${post?.id}`);
+
 
     if (postMainElement) {
       let observer = new IntersectionObserver(
@@ -26,6 +28,8 @@ export default function PostMain({ post }: postMainCompTypes) {
       observer.observe(postMainElement);
     }
   }, []);
+
+ 
 
   return (
     <>
@@ -75,7 +79,7 @@ export default function PostMain({ post }: postMainCompTypes) {
               
             </div>
 
-            {/* <PostMainLikes post={post} /> */}
+            <PostMainLikes post={post}/>
           </div>
         </div>
       </div>
