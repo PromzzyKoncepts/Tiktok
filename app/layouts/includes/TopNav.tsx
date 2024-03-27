@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiSearch, BiUser } from "react-icons/bi";
@@ -16,6 +16,7 @@ const TopNav = () => {
 
   const goTo = () => {
     console.log("here");
+    router.push('/upload', { scroll: false })
   };
   return (
     <>
