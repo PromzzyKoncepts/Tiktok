@@ -17,7 +17,7 @@ const SideNavMain = () => {
       <div
         id="SideNavMain"
         className={`fixed z-20 pt-[70px] h-full bg-white lg:border-r-0 border-r w-[75px] hover:overflow-scroll ${
-          pathName === "/" ? "lg:w-[250px]" : "lg:w-[220px]"
+          pathName === "/" ? "lg:w-[250px]" : "lg:w-[225px]"
         }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
