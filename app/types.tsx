@@ -45,6 +45,16 @@ export interface postMainLikesCompTypes {
   post: PostWithProfile;
 }
 
+
+export interface Post {
+  id: string;
+  user_id: string;
+  video_url: string;
+  text: string;
+  views:number,
+  created_at: string;
+
+}
 export interface Like {
   id:string,
   user_id: string,
@@ -69,4 +79,12 @@ export interface MenuItemFollowCompTypes {
 export interface UploadError {
   type:string,
   message:string,
+}
+
+export interface profilePageCompTypes {
+  params: {id:string;}
+}
+
+export interface PostUserCompTypes {
+  post: Post
 }
