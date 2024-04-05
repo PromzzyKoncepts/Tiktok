@@ -14,6 +14,13 @@ export interface RandomUsers {
   verified: boolean;
 }
 
+export interface CropperImageTypes {
+  width?: number | null,
+  height?: number | null,
+  left?: number | null,
+  top?: number | null,
+}
+
 // ///////////////////////////
 // COMPONENT TYPES
 
@@ -53,6 +60,8 @@ export interface Post {
   text: string;
   views:number,
   created_at: string;
+
+
 
 }
 export interface Like {
