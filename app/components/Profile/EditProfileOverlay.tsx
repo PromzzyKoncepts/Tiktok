@@ -36,6 +36,10 @@ const EditProfileOverlay = () => {
     
   };
 
+  const cropAndUpdateImage = () => {
+    console.log("uploaded")
+  }
+
 
   const showError = (type: string) => {
     if (error && Object.entries(error).length > 0 && error?.type == type) {
@@ -186,11 +190,11 @@ const EditProfileOverlay = () => {
               </div>
             ) : (
               <div id="CropperButton" className="flex items-center justify-end">
-                <button disabled={isUpdating} className="flex items-center border px-3 rounded-sm  py-[6px] hover:bg-gray-100">
+                <button onClick={() => setUploadedImage(null)} className="flex items-center border px-3 rounded-sm  py-[6px] hover:bg-gray-100">
                   <span className="px-2 font-medium text-[15px]">Cancel</span>
 
                 </button>
-                <button disabled={isUpdating} className="flex items-center border px-3 rounded-md ml-3  py-[6px] hover:shadow-md bg-[#f02c56] text-white ">
+                <button onClick={() => cropAndUpdateImage()} className="flex items-center border px-3 rounded-md ml-3  py-[6px] hover:shadow-md bg-[#f02c56] text-white ">
                   <span className="px-2 font-medium text-[15px]">{isUpdating ? <BiLoaderCircle color="#ffffff" size={30} className="animate-spin mx-2.5 my-1"/> : "Apply"}</span>
 
                 </button>
