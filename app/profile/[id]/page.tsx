@@ -1,6 +1,7 @@
 "use client";
 
 import ClientOnly from "@/app/components/ClientOnly";
+import EditProfileOverlay from "@/app/components/Profile/EditProfileOverlay";
 import PostUser from "@/app/components/Profile/PostUser";
 import MainLayout from "@/app/layouts/MainLayout";
 import { profilePageCompTypes } from "@/app/types";
@@ -41,6 +42,10 @@ export default function Profile({ params }: profilePageCompTypes) {
   return (
     <>
       <MainLayout>
+        <ClientOnly>
+      <EditProfileOverlay />
+
+        </ClientOnly>
         <div className="2xl:mx-auto pt-[90px] ml-[90px] 2xl:pl-[225px] lg:pl-[160px] lg:pr-0 w-[calc(100% - 250px)] pr-3 max-w-[1800px]">
           <div className="flex w-[calc(100vw-250px)]">
             <ClientOnly>
