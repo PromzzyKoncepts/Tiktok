@@ -14,6 +14,19 @@ export interface RandomUsers {
   verified: boolean;
 }
 
+
+export interface CropperImageTypes {
+  width?: number | null,
+  height?: number | null,
+  left?: number | null,
+  top?: number | null,
+}
+
+export interface showErrorObject {
+  type: string,
+  message:string,
+}
+
 // ///////////////////////////
 // COMPONENT TYPES
 
@@ -37,6 +50,7 @@ export interface formatNumber {
 }
 
 
+
 export interface postMainCompTypes {
   post: PostWithProfile;
 }
@@ -45,6 +59,18 @@ export interface postMainLikesCompTypes {
   post: PostWithProfile;
 }
 
+
+export interface Post {
+  id: string;
+  user_id: string;
+  video_url: string;
+  text: string;
+  views:number,
+  created_at: string;
+
+
+
+}
 export interface Like {
   id:string,
   user_id: string,
@@ -70,3 +96,24 @@ export interface UploadError {
   type:string,
   message:string,
 }
+
+export interface profilePageCompTypes {
+  params: {id:string;}
+}
+
+export interface PostUserCompTypes {
+  post: Post
+}
+
+
+
+export interface TextInputCompTypes {
+  string: string,
+  error: string,
+  placeholder: string,
+  onUpdate: (newValue: string) => void,
+  inputType: string,
+}
+
+
+
