@@ -14,11 +14,17 @@ export interface RandomUsers {
   verified: boolean;
 }
 
+
 export interface CropperImageTypes {
   width?: number | null,
   height?: number | null,
   left?: number | null,
   top?: number | null,
+}
+
+export interface showErrorObject {
+  type: string,
+  message:string,
 }
 
 // ///////////////////////////
@@ -42,6 +48,7 @@ export interface formatNumber {
   num: number,
   precision: number
 }
+
 
 
 export interface postMainCompTypes {
@@ -97,3 +104,16 @@ export interface profilePageCompTypes {
 export interface PostUserCompTypes {
   post: Post
 }
+
+
+
+export interface TextInputCompTypes {
+  string: string,
+  error: string,
+  placeholder: string,
+  onUpdate: (newValue: string) => void,
+  inputType: string,
+}
+
+
+
