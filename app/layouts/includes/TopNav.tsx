@@ -1,23 +1,41 @@
+import { useUser } from "@/app/context/user";
+import { useGeneralStore } from "@/app/store/General";
+import { RandomUsers } from "@/app/types";
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { BiSearch, BiUser } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 
 const TopNav = () => {
+  const contextUser = useUser();
   const pathName = usePathname();
   const router = useRouter();
+
+  let { setIsLoginOpen, setIsEditProfileOpen } = useGeneralStore();
+  let [showMenu, setShowMenu] = useState<boolean>(false);
+  let [searchProfiles, setSearchProfiles] = useState<RandomUsers[]>([]);
 
   const handleSearchChange = (event: { target: { value: string } }) => {
     console.log(event.target.value);
   };
 
+  useEffect(() => {
+    setIsEditProfileOpen(false);
+  }, []);
+
   const goTo = () => {
-    console.log("here");
-    router.push('/upload', { scroll: false })
+    if (!contextUser?.user) return setIsLoginOpen(true);
+    router.push("/upload", { scroll: false });
   };
+
+  const handleLogout = async () => {
+    await contextUser?.logout();
+    setShowMenu(false);
+  };
+
   return (
     <>
       <div
@@ -77,9 +95,12 @@ const TopNav = () => {
               <span className="px-2 font-medium text-[15px]">Upload</span>
             </button>
 
-            {true ? (
+            {!contextUser?.user?.id ? (
               <div className="flex items-center gap-3">
-                <button className="flex items-center bg-[#f02c56] text-white border py-[6px] px-3 rounded-sm">
+                <button
+                  onClick={() => setIsLoginOpen(true)}
+                  className="flex items-center bg-[#f02c56] text-white border py-[6px] px-3 rounded-sm"
+                >
                   <span className="whitespace-nowrap mx-4 text-[15px] font-medium">
                     {" "}
                     Log in
@@ -91,24 +112,38 @@ const TopNav = () => {
             ) : (
               <div className="flex items-center ">
                 <div className="relative">
-                  <button className="border mt-1 rounded-full border-gray-200">
+                  <button
+                    onClick={() => setShowMenu((showMenu = !showMenu))}
+                    className="border mt-1 rounded-full border-gray-200"
+                  >
                     <img
                       src="https://placehold.co/35"
                       alt=""
                       className="rounded-full w-[35px]"
                     />
                   </button>
-
-                  <div className="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl  border  top-[40px]  right-0">
-                    <button className="flex justify-start items-center w-full px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                  {showMenu && (
+                    <div className="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl  border  top-[40px]  right-0">
+                      <button className="flex justify-start items-center w-full px-3 py-2 hover:bg-gray-100 cursor-pointer">
                         <BiUser size={20} />
-                        <span className="text-sm font-semibold pl-2" >Profile</span>
-                    </button>
-                    <button className="flex justify-start items-center w-full px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                        <span className="text-sm font-semibold pl-2">
+                          Profile
+                        </span>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await contextUser?.logout();
+                          setShowMenu(false);
+                        }}
+                        className="flex items-center justify-start w-full py-3 px-1.5 hover:bg-gray-100 border-t cursor-pointer"
+                      >
                         <FiLogOut size={20} />
-                        <span className="text-sm font-semibold pl-2" >Log out</span>
-                    </button>
-                  </div>
+                        <span className="pl-2 font-semibold text-sm">
+                          Log out
+                        </span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

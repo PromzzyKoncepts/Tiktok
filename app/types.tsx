@@ -11,6 +11,12 @@ export interface RandomUsers {
   username: string;
   id: string;
   image: string;
+}
+export interface RandomUsers2 {
+  name: string;
+  username: string;
+  id: string;
+  image: string;
   verified: boolean;
 }
 
@@ -115,7 +121,7 @@ export interface Comment {
 }
 
 export interface MenuItemFollowCompTypes {
-  user: RandomUsers;
+  user: RandomUsers2;
 }
 
 export interface UploadError {
@@ -141,7 +147,27 @@ export interface PostUserCompTypes {
 export interface TextInputCompTypes {
   string: string;
   error: string;
+  name: string;
   placeholder: string;
   onUpdate: (newValue: string) => void;
   inputType: string;
+}
+
+
+
+// CONTEXT TYPES
+export interface UserContextTypes {
+  user: User | null,
+  register: (name: string, email: string, username: string, password: string) => Promise<void>,
+  login: ( email: string,  password: string) => Promise<void>,
+  logout: () => Promise<void>,
+  checkUser: () => Promise<void>,
+  
+}
+
+export interface User { 
+  id: string,
+  name: string,
+  bio: string,
+  image: string,
 }
