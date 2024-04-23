@@ -12,6 +12,13 @@ export interface RandomUsers {
   id: string;
   image: string;
 }
+export interface RandomUsers2 {
+  name: string;
+  username: string;
+  id: string;
+  image: string;
+  verified: boolean;
+}
 
 export interface CropperImageTypes {
   width?: number | null;
@@ -114,7 +121,7 @@ export interface Comment {
 }
 
 export interface MenuItemFollowCompTypes {
-  user: RandomUsers;
+  user: RandomUsers2;
 }
 
 export interface UploadError {
