@@ -126,6 +126,7 @@ const EditProfileOverlay = () => {
                           onUpdate={setUserName}
                           inputType="text"
                           error={showError("userName")}
+                          name="name"
                         />
 
                         <p
