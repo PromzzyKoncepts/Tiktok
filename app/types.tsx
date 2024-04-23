@@ -11,7 +11,6 @@ export interface RandomUsers {
   username: string;
   id: string;
   image: string;
-  verified: boolean;
 }
 
 export interface CropperImageTypes {
@@ -141,7 +140,27 @@ export interface PostUserCompTypes {
 export interface TextInputCompTypes {
   string: string;
   error: string;
+  name: string;
   placeholder: string;
   onUpdate: (newValue: string) => void;
   inputType: string;
+}
+
+
+
+// CONTEXT TYPES
+export interface UserContextTypes {
+  user: User | null,
+  register: (name: string, email: string, username: string, password: string) => Promise<void>,
+  login: ( email: string,  password: string) => Promise<void>,
+  logout: () => Promise<void>,
+  checkUser: () => Promise<void>,
+  
+}
+
+export interface User { 
+  id: string,
+  name: string,
+  bio: string,
+  image: string,
 }
