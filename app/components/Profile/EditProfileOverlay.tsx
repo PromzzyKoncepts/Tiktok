@@ -1,45 +1,104 @@
+import React, { useState, useEffect } from "react";
 import { Cropper } from "react-advanced-cropper";
-import 'react-advanced-cropper/dist/style.css';
+import "react-advanced-cropper/dist/style.css";
 import { CropperImageTypes, showErrorObject } from "@/app/types";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsPencil } from "react-icons/bs";
 import TextInput from "./TextInput";
 import { BiLoaderCircle } from "react-icons/bi";
+import { useProfileStore } from "@/app/store/profile";
+import { useUser } from "@/app/context/user";
+import { useGeneralStore } from "@/app/store/General";
+import useUpdateProfile from "@/app/hooks/useUpdateProfile";
+import useChangeUserImage from "@/app/hooks/useChangeUserImage";
+import useUpdateProfileImage from "@/app/hooks/useUpdateProfileImage";
+import UseCreateBucketUrl from "@/app/hooks/useCreateBucketUrl";
 
 const EditProfileOverlay = () => {
   const router = useRouter();
 
+  let { currentProfile, setCurrentProfile } = useProfileStore();
+  let { setIsEditProfileOpen } = useGeneralStore();
+
+  const contextUser = useUser();
+
   const [file, setFile] = useState<File | null>(null);
   const [cropper, setCropper] = useState<CropperImageTypes | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [userImage, setUserImage] = useState<string | "">(
-    "https://placehold.co/400"
-  );
+  const [userImage, setUserImage] = useState<string | "">("");
   const [userName, setUserName] = useState<string | "">("");
   const [userBio, setUserBio] = useState<string | "">("");
   const [isUpdating, setIsUpdating] = useState<boolean | false>(false);
   const [error, setError] = useState<showErrorObject | null>(null);
 
-  const getUploadedImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files && event.target.files[0]
+  useEffect(() => {
+    setUserName(currentProfile?.name || "");
+    setUserBio(currentProfile?.bio || "");
+    setUserImage(currentProfile?.image || "");
+  }, []);
 
-    if(selectedFile){
-      setFile(selectedFile)
-      setUploadedImage(URL.createObjectURL(selectedFile))
+  const getUploadedImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files && event.target.files[0];
+
+    if (selectedFile) {
+      setFile(selectedFile);
+      setUploadedImage(URL.createObjectURL(selectedFile));
+    } else {
+      setFile(null);
+      setUploadedImage(null);
     }
-    else {
-      setFile(null)
-      setUploadedImage(null)
-    }
-    
   };
 
-  const cropAndUpdateImage = () => {
-    console.log("uploaded")
-  }
+  const cropAndUpdateImage = async () => {
+    let isError = validate();
+    if (isError) return;
+    if (!contextUser?.user) return;
+    try {
+      if (!file) return alert("You have no file uploaded!");
+      if (!cropper) return alert("You have no file uploaded!");
+      setIsUpdating(true);
 
+      const newImageId = await useChangeUserImage(file, cropper, userImage);
+
+      await useUpdateProfileImage(currentProfile?.id || "", newImageId);
+
+      await contextUser.checkUser();
+      setCurrentProfile(contextUser?.user?.id);
+      setIsEditProfileOpen(false);
+      setIsUpdating(false)
+    } catch (error) {
+      console.error(error);
+      setIsUpdating(false)
+    }
+  };
+
+  const validate = () => {
+    setError(null);
+    let isError = false;
+
+    if (!userName) {
+      setError({ type: "username", message: "A username is required" });
+      isError = true;
+    }
+    return isError;
+  };
+
+  const updateUserInfo = async () => {
+    let isError = validate();
+    if (isError) return;
+    if (!contextUser?.user) return;
+
+    try {
+      setIsUpdating(true);
+      await useUpdateProfile(currentProfile?.id || "", userName, userBio);
+      setCurrentProfile(contextUser?.user?.id);
+      setIsEditProfileOpen(false);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const showError = (type: string) => {
     if (error && Object.entries(error).length > 0 && error?.type == type) {
@@ -63,6 +122,7 @@ const EditProfileOverlay = () => {
             <h1 className="font-medium text-[22px]">Edit Profile</h1>
             <button
               disabled={isUpdating}
+              onClick={() => setIsEditProfileOpen(false)}
               className="hover:bg-gray-200 p-1 rounded-full"
             >
               <AiOutlineClose size={25} />
@@ -91,7 +151,7 @@ const EditProfileOverlay = () => {
                         className="relative cursor-pointer"
                       >
                         <img
-                          src={userImage}
+                          src={UseCreateBucketUrl(userImage) || "/images/placeholder-user.jpg"}
                           alt=""
                           className="rounded-full"
                           width={95}
@@ -162,47 +222,93 @@ const EditProfileOverlay = () => {
                           onChange={(e) => setUserBio(e.target.value)}
                           className="w-full resize-none bg-[#f1f1f2] text-gray-800 border border-gray-300 py-2.5 rounded-md px-3 focus:outline-none"
                         />
-                        <p className={`text-11px text-gray-500 ${userBio.length === 100 ? "text-red-500" : ""}`}>{userBio ? userBio.length : 0}/100</p>
+                        <p
+                          className={`text-11px text-gray-500 ${
+                            userBio.length === 100 ? "text-red-500" : ""
+                          }`}
+                        >
+                          {userBio ? userBio.length : 0}/100
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
-              ) : (<div className="circle-stencil bg-black max-h-[420px] mx-auto w-full ">
-                <Cropper 
-                stencilProps={{aspectRatio : 1, lines:false}} // remove this to make it croppable in any ratio
-                className="h-[400px] "
-                onChange={(cropper) => setCropper(cropper.getCanvas())}
-                src={uploadedImage}
-                />
-                </div>)}
-
+              ) : (
+                <div className="circle-stencil bg-black max-h-[420px] mx-auto w-full ">
+                  <Cropper
+                    stencilProps={{ aspectRatio: 1, lines: false }} // remove this to make it croppable in any ratio
+                    className="h-[400px] "
+                    onChange={(cropper) => setCropper(cropper.getCanvas())}
+                    src={uploadedImage}
+                  />
+                </div>
+              )}
             </div>
 
-            <div id="ButtonSection" className="absolute bottom-0 p-5 left-0 border-t border-t-gray-300 w-full">{!uploadedImage ? (
-              <div id="UpdateInfoButton" className="flex items-center justify-end">
-                <button disabled={isUpdating} className="flex items-center border px-3 rounded-sm  py-[6px] hover:bg-gray-100">
-                  <span className="px-2 font-medium text-[15px]">Cancel</span>
-
-                </button>
-                <button disabled={isUpdating} className="flex items-center border px-3 rounded-md ml-3  py-[6px] hover:shadow-md bg-[#f02c56] text-white ">
-                  <span className="px-2 font-medium text-[15px]">{isUpdating ? <BiLoaderCircle color="#ffffff" size={30} className="animate-spin mx-2.5 my-1"/> : "Save"}</span>
-
-                </button>
-              </div>
-            ) : (
-              <div id="CropperButton" className="flex items-center justify-end">
-                <button onClick={() => setUploadedImage(null)} className="flex items-center border px-3 rounded-sm  py-[6px] hover:bg-gray-100">
-                  <span className="px-2 font-medium text-[15px]">Cancel</span>
-
-                </button>
-                <button onClick={() => cropAndUpdateImage()} className="flex items-center border px-3 rounded-md ml-3  py-[6px] hover:shadow-md bg-[#f02c56] text-white ">
-                  <span className="px-2 font-medium text-[15px]">{isUpdating ? <BiLoaderCircle color="#ffffff" size={30} className="animate-spin mx-2.5 my-1"/> : "Apply"}</span>
-
-                </button>
-              </div>
-            )
-            
-            }</div>
+            <div
+              id="ButtonSection"
+              className="absolute bottom-0 p-5 left-0 border-t border-t-gray-300 w-full"
+            >
+              {!uploadedImage ? (
+                <div
+                  id="UpdateInfoButton"
+                  className="flex items-center justify-end"
+                >
+                  <button
+                    disabled={isUpdating}
+                    onClick={() => setIsEditProfileOpen(false)}
+                    className="flex items-center border px-3 rounded-sm  py-[6px] hover:bg-gray-100"
+                  >
+                    <span className="px-2 font-medium text-[15px]">Cancel</span>
+                  </button>
+                  <button
+                    disabled={isUpdating}
+                    onClick={updateUserInfo}
+                    className="flex items-center border px-3 rounded-md ml-3  py-[6px] hover:shadow-md bg-[#f02c56] text-white "
+                  >
+                    <span className="px-2 font-medium text-[15px]">
+                      {isUpdating ? (
+                        <BiLoaderCircle
+                          color="#ffffff"
+                          size={30}
+                          className="animate-spin mx-2.5 my-1"
+                        />
+                      ) : (
+                        "Save"
+                      )}
+                    </span>
+                  </button>
+                </div>
+              ) : (
+                <div
+                  id="CropperButton"
+                  className="flex items-center justify-end"
+                >
+                  <button
+                    onClick={() => setUploadedImage(null)}
+                    className="flex items-center border px-3 rounded-sm  py-[6px] hover:bg-gray-100"
+                  >
+                    <span className="px-2 font-medium text-[15px]">Cancel</span>
+                  </button>
+                  <button
+                    onClick={() => cropAndUpdateImage()}
+                    className="flex items-center border px-3 rounded-md ml-3  py-[6px] hover:shadow-md bg-[#f02c56] text-white "
+                  >
+                    <span className="px-2 font-medium text-[15px]">
+                      {isUpdating ? (
+                        <BiLoaderCircle
+                          color="#ffffff"
+                          size={30}
+                          className="animate-spin mx-2.5 my-1"
+                        />
+                      ) : (
+                        "Apply"
+                      )}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

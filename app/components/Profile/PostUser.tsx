@@ -5,6 +5,7 @@ import { PostUserCompTypes } from "../../types";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
 import { CiPlay1 } from "react-icons/ci";
+import UseCreateBucketUrl from "@/app/hooks/useCreateBucketUrl";
 
 const PostUser = ({ post }: PostUserCompTypes) => {
   useEffect(() => {
@@ -54,7 +55,7 @@ const PostUser = ({ post }: PostUserCompTypes) => {
       ) : (
         <Link href={`/post/${post?.id}/${post?.user_id}`} className="relative">
           <video
-            src={post.video_url}
+            src={UseCreateBucketUrl(post?.video_url)}
             id={`video${post.id}`}
             muted
             loop
@@ -66,7 +67,7 @@ const PostUser = ({ post }: PostUserCompTypes) => {
                 size={20}
                 color="#ffffff"
               />
-            <div>{formatNumber(post.views, 0)}</div>
+            {/* <div>{formatNumber(post.views, 0)}</div> */}
           </div>
         </Link>
       )}

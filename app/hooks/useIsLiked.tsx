@@ -1,7 +1,7 @@
 import React from 'react'
 import { Like } from '../types'
 
-const useIsLiked = async (userId:string, postId:string, likes:Array<Like>) => {
+const useIsLiked = (userId:string, postId:string, likes:Array<Like>) => {
   let res:Like[] =[]
   likes?.forEach((like) => {
     if(like.user_id == userId && like.post_id == postId) res.push(like)

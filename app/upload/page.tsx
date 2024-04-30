@@ -1,14 +1,24 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UploadError } from "../types";
 import UploadLayout from "../layouts/UploadLayout";
 import { BiLoaderCircle, BiSolidCloudUpload } from "react-icons/bi";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { PiKnifeLight } from "react-icons/pi";
+import { useUser } from "../context/user";
+import useCreatePost from "../hooks/useCreatePost";
 
 const page = () => {
   const router = useRouter();
+  const contextUser = useUser()
+
+
+  useEffect(() => {
+    if(!contextUser?.user) router.push('/')
+    
+  }, [contextUser])
+  
 
   let [fileDisplay, setFileDisplay] = useState<string>("");
   let [caption, setCaption] = useState<string>("");
@@ -36,9 +46,41 @@ const page = () => {
     setFile(null);
     setCaption("");
   };
-  const createNewPost = () => {
-    console.log("post has been created");
+
+  
+  const validate = () => {
+    setError(null);
+    let isError = false;
+
+    if (!file) {
+      setError({ type: "File", message: "A video is required" });
+      isError = true;
+    }
+    else if (!caption) {
+      setError({ type: "caption", message: "A caption is required" });
+      isError = true;
+    }
+    return isError;
   };
+
+  const createNewPost = async() => {
+    let isError = validate();
+    if (isError) return;
+
+    if (!contextUser?.user || !file) return;
+
+    setIsUploading(true)
+    try {
+      await useCreatePost(file, contextUser?.user?.id, caption)
+      router.push(`/profile/${contextUser?.user?.id}`)
+      setIsUploading(false)
+    } catch (error) {
+      console.error(error)
+      setIsUploading(false)
+    }
+  };
+
+
 
   return (
     <div>

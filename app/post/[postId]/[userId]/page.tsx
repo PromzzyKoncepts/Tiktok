@@ -3,36 +3,46 @@
 import ClientOnly from "@/app/components/ClientOnly";
 import Comments from "@/app/components/post/Comments";
 import CommentsHeader from "@/app/components/post/CommentsHeader";
+import UseCreateBucketUrl from "@/app/hooks/useCreateBucketUrl";
+import { useCommentStore } from "@/app/store/comment";
+import { useLikeStore } from "@/app/store/like";
+import { usePostStore } from "@/app/store/post";
 import { postPageTypes } from "@/app/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 
 const Post = ({ params }: postPageTypes) => {
   const router = useRouter();
 
+  let {postById, postsByUser, setPostById, setPostsByUser} = usePostStore()
+  let {setLikesByPost} = useLikeStore()
+  let {setCommentsByPost} = useCommentStore()
+
+  useEffect(() => {
+    setPostById(params?.postId)
+    setCommentsByPost(params?.postId)
+    setLikesByPost(params?.postId)
+    setPostsByUser(params?.postId)
+  }, [])
+
   const loopThroughPostsUp = () => {
-    console.log("loop through");
+    postsByUser.forEach((post) => {
+      if(post.id > params.postId) {
+        router.push(`/post/${post.id}/${params.userId}`)
+      }
+    })
   };
   const loopThroughPostsDown = () => {
-    console.log("loop through");
+    postsByUser.forEach((post) => {
+      if(post.id < params.postId) {
+        router.push(`/post/${post.id}/${params.userId}`)
+      }
+    })
   };
 
-  const postById = {
-    id:"123",
-    user_id: "456",
-    video_url: "https://cdn.pixabay.com/vimeo/849610807/ocean-173530.mp4?width=360&hash=de6ae525ac689219f1ab32778c2da557e12a4070",
-    text: "this is some description",
-    created_at: "2024-07-01",
-    profile: {
-      user_id: "456",
-      name: "Promise Okechukwu",
-      username: "pr0mzzy",
-      image: "https://placehold.co/100"
-
-    }
-  }
 
   return (
     <div>
@@ -47,13 +57,13 @@ const Post = ({ params }: postPageTypes) => {
 
           <div>
             <button
-              onClick={() => loopThroughPostsUp()}
+              onClick={loopThroughPostsUp}
               className="flex justify-center items-center right-4 top-4 text-center absolute z-20 rounded-full p-1.5 bg-gray-700 hover:bg-gray-800"
             >
               <BiChevronUp color="#ffffff" size={30} />
             </button>
             <button
-              onClick={() => loopThroughPostsDown()}
+              onClick={loopThroughPostsDown}
               className="flex justify-center items-center right-4 top-20 text-center absolute z-20 rounded-full p-1.5 bg-gray-700 hover:bg-gray-800"
             >
               <BiChevronDown color="#ffffff" size={30} />
@@ -66,16 +76,16 @@ const Post = ({ params }: postPageTypes) => {
             alt="video background image"
           />
 
-          <ClientOnly>{postById?.video_url ? <video src="https://cdn.pixabay.com/vimeo/849610807/ocean-173530.mp4?width=360&hash=de6ae525ac689219f1ab32778c2da557e12a4070" className="fixed object-cover my-auto w-full z-0 h-screen"></video> : null}
+          <ClientOnly>{postById?.video_url ? <video src={UseCreateBucketUrl(postById?.video_url)} className="fixed object-cover my-auto w-full z-0 h-screen"></video> : null}
           
           <div className="bg-black bg-opacity-70 lg:min-w-[480px] z-10 relative">
-            {true ? (
+            {postById?.video_url && (
               
               <video autoPlay loop controls muted 
               className="h-screen mx-auto" 
-              src="https://cdn.pixabay.com/vimeo/849610807/ocean-173530.mp4?width=360&hash=de6ae525ac689219f1ab32778c2da557e12a4070"/>
+              src={UseCreateBucketUrl(postById?.video_url)} />
 
-            ) : null}
+            )}
 
           </div>
           </ClientOnly>
@@ -85,9 +95,9 @@ const Post = ({ params }: postPageTypes) => {
           <div className="py-7"></div>
 
           <ClientOnly>
-            {postById?.video_url ? (
+            {postById?.video_url && (
               <CommentsHeader post={postById} params={params} />
-            ) : ( null)}
+            )}
           </ClientOnly>
           <Comments params={params}/>
         </div>
