@@ -17,42 +17,44 @@ import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 const Post = ({ params }: postPageTypes) => {
   const router = useRouter();
 
-  let {postById, postsByUser, setPostById, setPostsByUser} = usePostStore()
-  let {setLikesByPost} = useLikeStore()
-  let {setCommentsByPost} = useCommentStore()
+  let { postById, postsByUser, setPostById, setPostsByUser } = usePostStore();
+  let { setLikesByPost } = useLikeStore();
+  let { setCommentsByPost } = useCommentStore();
 
   useEffect(() => {
-    setPostById(params?.postId)
-    setCommentsByPost(params?.postId)
-    setLikesByPost(params?.postId)
-    setPostsByUser(params?.postId)
-  }, [])
+    setPostById(params?.postId);
+    setCommentsByPost(params?.postId);
+    setLikesByPost(params?.postId);
+    setPostsByUser(params?.postId);
+  }, []);
 
   const loopThroughPostsUp = () => {
     postsByUser.forEach((post) => {
-      if(post.id > params.postId) {
-        router.push(`/post/${post.id}/${params.userId}`)
+      if (post.id > params.postId) {
+        router.push(`/post/${post.id}/${params.userId}`);
       }
-    })
+    });
   };
   const loopThroughPostsDown = () => {
     postsByUser.forEach((post) => {
-      if(post.id < params.postId) {
-        router.push(`/post/${post.id}/${params.userId}`)
+      if (post.id < params.postId) {
+        router.push(`/post/${post.id}/${params.userId}`);
       }
-    })
+    });
   };
-
 
   return (
     <div>
-      <div id="PostPage" className="w-full h-screen bg-black overflow-auto justify-between lg:flex">
+      <div
+        id="PostPage"
+        className="w-full h-screen bg-black overflow-auto justify-between lg:flex"
+      >
         <div className="h-full relative lg:w-[calc(100%-540px)]">
           <Link
             href={`/profile/${params?.userId}`}
             className="absolute z-20 m-5 rounded-full text-white bg-gray-700 p-1.5  hover:bg-gray-800"
           >
-            <AiOutlineClose size={25} color="#ffffff"/>
+            <AiOutlineClose size={25} color="#ffffff" />
           </Link>
 
           <div>
@@ -76,22 +78,32 @@ const Post = ({ params }: postPageTypes) => {
             alt="video background image"
           />
 
-          <ClientOnly>{postById?.video_url ? <video src={UseCreateBucketUrl(postById?.video_url)} className="fixed object-cover my-auto w-full z-0 h-screen"></video> : null}
-          
-          <div className="bg-black bg-opacity-70 lg:min-w-[480px] z-10 relative">
-            {postById?.video_url && (
-              
-              <video autoPlay loop controls muted 
-              className="h-screen mx-auto" 
-              src={UseCreateBucketUrl(postById?.video_url)} />
+          <ClientOnly>
+            {postById?.video_url ? (
+              <video
+                src={UseCreateBucketUrl(postById?.video_url)}
+                className="fixed object-cover my-auto w-full z-0 h-screen"
+              ></video>
+            ) : null}
 
-            )}
-
-          </div>
+            <div className="bg-black bg-opacity-70 lg:min-w-[480px] z-10 relative">
+              {postById?.video_url && (
+                <video
+                  autoPlay
+                  loop
+                  controls
+                  className="h-screen mx-auto"
+                  src={UseCreateBucketUrl(postById?.video_url)}
+                />
+              )}
+            </div>
           </ClientOnly>
         </div>
 
-        <div id="InfoSection" className="lg:max-w-[550px] relative w-full bg-white h-full">
+        <div
+          id="InfoSection"
+          className="lg:max-w-[550px] relative w-full bg-white h-full"
+        >
           <div className="py-7"></div>
 
           <ClientOnly>
@@ -99,7 +111,7 @@ const Post = ({ params }: postPageTypes) => {
               <CommentsHeader post={postById} params={params} />
             )}
           </ClientOnly>
-          <Comments params={params}/>
+          <Comments params={params} />
         </div>
       </div>
     </div>
