@@ -15,7 +15,7 @@ const TextInput = ({string, name, inputType, placeholder, error, onUpdate}: Text
       onChange={(event) => onUpdate(event.target.value) } 
       />
 
-      <div className="text-red-500 text-sm font-semibold">{error ? (error) : null}</div>
+      <div className="text-red-500 text-sm font-semibold">{error && (error)}</div>
     </div>
   )
 }

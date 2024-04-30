@@ -24,14 +24,14 @@ const Comments = ({ params }: CommentsCompTypes) => {
     }
     try{
       setIsUploading(true),
-      await useCreateComment(contextUser?.user?.id, params?.postId, comment)
+      await useCreateComment(contextUser.user.id, params.postId, comment)
       setCommentsByPost(params?.postId)
       setComment('')
       setIsUploading(false)
 
     }catch(error) {
-      throw error
       console.error(error)
+      throw error
     }
     
     

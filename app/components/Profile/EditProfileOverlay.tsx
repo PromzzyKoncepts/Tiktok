@@ -191,7 +191,7 @@ const EditProfileOverlay = () => {
 
                         <p
                           className={`relative text-gray-500 text-sm ${
-                            error ? "mt-1" : "mt-1"
+                            error ? "mt-1" : "mt-1.5"
                           }`}
                         >
                           Username can only contain letters, numbers,
