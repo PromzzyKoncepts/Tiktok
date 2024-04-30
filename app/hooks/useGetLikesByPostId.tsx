@@ -9,6 +9,7 @@ const useGetLikesByPostId = async (postId: string) => {
       [Query.equal("post_id", postId)]
     );
     const documents = res.documents;
+    console.log(documents, "/////////")
     const result = documents.map((doc) => {
       return {
         id: doc?.$id,

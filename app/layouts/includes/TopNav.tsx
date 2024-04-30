@@ -1,6 +1,9 @@
 import { useUser } from "@/app/context/user";
+import UseCreateBucketUrl from "@/app/hooks/useCreateBucketUrl";
+import useSearchProfilesByName from "@/app/hooks/useSearchProfilesByName";
 import { useGeneralStore } from "@/app/store/General";
 import { RandomUsers } from "@/app/types";
+import debounce from "debounce";
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -18,9 +21,19 @@ const TopNav = () => {
   let [showMenu, setShowMenu] = useState<boolean>(false);
   let [searchProfiles, setSearchProfiles] = useState<RandomUsers[]>([]);
 
-  const handleSearchChange = (event: { target: { value: string } }) => {
-    console.log(event.target.value);
-  };
+  const handleSearchName = debounce(async (event: { target: { value: string } }) => {
+    if (event.target.value == "") return setSearchProfiles([])
+
+    try {
+        const result = await useSearchProfilesByName(event.target.value)
+        if (result) return setSearchProfiles(result)
+        setSearchProfiles([])
+    } catch (error) {
+        console.log(error)
+        setSearchProfiles([])
+        alert(error)
+    }
+}, 500)
 
   useEffect(() => {
     setIsEditProfileOpen(false);
@@ -57,29 +70,28 @@ const TopNav = () => {
           <div className="hidden relative md:flex items-center justify-end bg-[#f1f1f2] p-1 rounded-full  max-w-[430px] w-full hover:text-[#282828] hover:shadow">
             <input
               type="text"
-              onChange={handleSearchChange}
+              onChange={handleSearchName}
               className="w-full my-2 pl-3 bg-transparent placeholder-[#838383] hover:placeholder-black text-[15px] focus:outline-none"
               placeholder="Search"
             />
 
-            <div className="bg-white absolute max-w-[910px] h-auto w-full z-20 left-0 top-12 shadow-md p-1">
-              <div className="p-1">
-                <Link
-                  href={`/profile/1`}
-                  className="flex items-center w-full justify-between hover:bg-[#f12856] cursor-pointer p-1 px-2 hover:text-white"
-                >
-                  <div className="items-center flex">
-                    <img
-                      className="rounded-md "
-                      src="https://placehold.co/40"
-                      alt=""
-                      width={40}
-                    />
-                    <div className="truncate ml-2">Promise Okechukwu</div>
-                  </div>
-                </Link>
-              </div>
-            </div>
+           {searchProfiles.length > 0 && (
+             <div className="bg-white absolute max-w-[910px] h-auto w-full z-20 left-0 top-12 shadow-md p-1">
+             {searchProfiles.map((profile, index) => (
+                <div className="p-1" key={index}>
+                  <Link 
+                    href={`/profile/${profile?.id}`}
+                    className="flex items-center justify-between w-full cursor-pointer hover:bg-[#F12B56] p-1 px-2 hover:text-white"
+                    >
+                      <div className="flex items-center">
+                          <img className="rounded-md" width="40" src={UseCreateBucketUrl(profile?.image) || "/images/placeholder-user.jpg"} />
+                          <div className="truncate ml-2">{ profile?.name }</div>
+                      </div>
+                    </Link>
+                </div>
+            ))}
+           </div>
+           )}
 
             <div className="px-3 border-l border-l-gray-300 flex items-center text-[#a1a2a7] hover:text-[#282828]  py-1 ">
               <BiSearch size={22} />
@@ -117,14 +129,17 @@ const TopNav = () => {
                     className="border mt-1 rounded-full border-gray-200"
                   >
                     <img
-                      src="https://placehold.co/35"
-                      alt=""
+                      src={UseCreateBucketUrl(contextUser?.user?.image )|| "/images/placeholder-user.jpg"}
+                      alt="profile image"
                       className="rounded-full w-[35px]"
                     />
                   </button>
                   {showMenu && (
                     <div className="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl  border  top-[40px]  right-0">
-                      <button className="flex justify-start items-center w-full px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                      <button className="flex justify-start items-center w-full px-3 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => {
+                        router.push(`/profile/${contextUser?.user?.id}`)
+                        setShowMenu(false)
+                      }}>
                         <BiUser size={20} />
                         <span className="text-sm font-semibold pl-2">
                           Profile

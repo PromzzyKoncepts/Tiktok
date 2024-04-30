@@ -2,11 +2,7 @@ import { database, ID, Query } from "@/libs/AppWriteClient";
 import React from "react";
 import UseGetProfileByUserId from "./useGetProfileByUserId";
 
-const useGetAllPosts = async (
-  userId: string,
-  postId: string,
-  comment: string
-) => {
+const useGetAllPosts = async () => {
   try {
     const response = await database.listDocuments(
       String(process.env.NEXT_PUBLIC_DATABASE_ID),

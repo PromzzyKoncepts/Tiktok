@@ -1,15 +1,24 @@
-""
+("");
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MenuItem from "./MenuItem";
 import ClientOnly from "@/app/components/ClientOnly";
 import MenuItemFollow from "@/app/layouts/includes/MenuItemFollow";
+import { useGeneralStore } from "@/app/store/General";
+import { useUser } from "@/app/context/user";
 
 const SideNavMain = () => {
+  let { randomUsers, setRandomUsers } = useGeneralStore();
+  const contextUser = useUser();
+
+  useEffect(() => {
+    setRandomUsers();
+  }, []);
+
   const pathName = usePathname();
-  const currentYear: number = new Date().getFullYear()
+  const currentYear: number = new Date().getFullYear();
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -59,7 +68,7 @@ const SideNavMain = () => {
               sizeString="25"
             />
           </Link>
-          <Link href="/@">
+          <Link href={`/profile/${contextUser?.user?.id}`}>
             <MenuItem
               iconString="Profile"
               colorString={pathName == "/" ? "#f02c56" : ""}
@@ -75,40 +84,16 @@ const SideNavMain = () => {
           <div className="block pt-3 lg:hidden" />
           <ClientOnly>
             <div className="cursor-pointer">
-              <MenuItemFollow
-                user={{
-                  id: "1",
-                  name: "test user",
-                  username: "test",
-                  image: "https://placehold.co/50",
-                  verified: true,
-                }}
-              />
-              <MenuItemFollow
-                user={{
-                  id: "1",
-                  name: "Promise Okechukwu",
-                  username: "pr0mzzy",
-                  image: "https://placehold.co/50",
-                  verified: true,
-                }}
-              />
-              <MenuItemFollow
-                user={{
-                  id: "1",
-                  name: "Maxwell",
-                  username: "maxwell055",
-                  image: "https://placehold.co/50",
-                  verified: false,
-                }}
-              />
+              {randomUsers.map((user, index) => (
+                <MenuItemFollow user={user} key={index} />
+              ))}
             </div>
           </ClientOnly>
 
           <button className="lg:block hidden text-[#f02c56] pt-1.5 pl-2 text-[12px]">
             See all
           </button>
-          {!true ? (
+          {contextUser?.user?.id ? (
             <div>
               <div className="border-b lg:ml-2  mt-2"></div>
               <h3 className="hidden lg:block text-xs text-gray-600 font-semibold pb-2 px-2 pt-4">
@@ -118,24 +103,10 @@ const SideNavMain = () => {
               <div className="block pt-3 lg:hidden" />
               <ClientOnly>
                 <div className="cursor-pointer">
-                  <MenuItemFollow
-                    user={{
-                      id: "1",
-                      name: "Promise Okechukwu",
-                      username: "pr0mzzy",
-                      image: "https://placehold.co/50",
-                      verified: true,
-                    }}
-                  />
-                  <MenuItemFollow
-                    user={{
-                      id: "1",
-                      name: "Maxwell",
-                      username: "maxwell055",
-                      image: "https://placehold.co/50",
-                      verified: false,
-                    }}
-                  />
+                  {randomUsers.map((user, index) => (
+                    <MenuItemFollow user={user} key={index} />
+                  ))}
+                  
                 </div>
               </ClientOnly>
 
@@ -156,7 +127,7 @@ const SideNavMain = () => {
 
           <div className="lg:block hidden text-[12px] text-gray-500">
             <p className="pt-4 px-2">
-              About   Newsroom   TikTok Shop    Contact Careers
+              About Newsroom TikTok Shop Contact Careers
             </p>
             <p className="pt-4 px-2">
               TikTok for Good Advertise Developers Transparency TikTok Rewards

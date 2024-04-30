@@ -1,7 +1,7 @@
 import { database, Query } from "@/libs/AppWriteClient";
 import React from "react";
 
-const useGetPostByUser = async (userId: string) => {
+const useGetPostsByUser = async (userId: string) => {
   try {
     const res = await database.listDocuments(
       String(process.env.NEXT_PUBLIC_DATABASE_ID),
@@ -29,4 +29,4 @@ const useGetPostByUser = async (userId: string) => {
   }
 };
 
-export default useGetPostByUser;
+export default useGetPostsByUser;

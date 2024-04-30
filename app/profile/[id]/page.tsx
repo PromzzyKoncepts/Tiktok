@@ -1,24 +1,28 @@
 "use client";
 
+import { useEffect } from "react";
+import { BsPencil } from "react-icons/bs";
 import ClientOnly from "@/app/components/ClientOnly";
 import EditProfileOverlay from "@/app/components/Profile/EditProfileOverlay";
 import PostUser from "@/app/components/Profile/PostUser";
+import { useUser } from "@/app/context/user";
 import MainLayout from "@/app/layouts/MainLayout";
+import { useGeneralStore } from "@/app/store/General";
+import { usePostStore } from "@/app/store/post";
+import { useProfileStore } from "@/app/store/profile";
 import { profilePageCompTypes } from "@/app/types";
-import { BsPencil } from "react-icons/bs";
+import UseCreateBucketUrl from "@/app/hooks/useCreateBucketUrl";
 
 export default function Profile({ params }: profilePageCompTypes) {
-  const currentProfile = {
-    id: "12345",
-    user_id: "12345",
-    username: "pr0mzzy",
-    name: "Promise Okechukwu",
-    image: "https://placehold.co/100",
-    bio: "I am the creator of this clone of tiktok",
-    followers: 10000000,
-    following: 1000,
-    totalLikes: 230000000,
-  };
+  
+  const contextUser = useUser()
+  let {postsByUser, setPostsByUser} = usePostStore()
+  let {currentProfile, setCurrentProfile} = useProfileStore()
+  let {isEditProfileOpen, setIsEditProfileOpen} = useGeneralStore()
+  useEffect(() => {
+    setCurrentProfile(params?.id)
+    setPostsByUser(params?.id)
+  }, [])
 
   function formatNumber(num: number, precision: number = 1) {
     const map = [
@@ -42,16 +46,12 @@ export default function Profile({ params }: profilePageCompTypes) {
   return (
     <>
       <MainLayout>
-        <ClientOnly>
-      <EditProfileOverlay />
-
-        </ClientOnly>
         <div className="2xl:mx-auto pt-[90px] ml-[90px] 2xl:pl-[225px] lg:pl-[160px] lg:pr-0 w-[calc(100% - 250px)] pr-3 max-w-[1800px]">
           <div className="flex w-[calc(100vw-250px)]">
             <ClientOnly>
-              {true ? (
+              {currentProfile ? (
                 <img
-                  src={currentProfile.image}
+                  src={UseCreateBucketUrl(currentProfile?.image)}
                   alt=""
                   className="w-[120px] min-w-[120px] rounded-full"
                 />
@@ -65,10 +65,10 @@ export default function Profile({ params }: profilePageCompTypes) {
                 {currentProfile?.name ? (
                   <div>
                     <p className="text-[30px] font-bold truncate">
-                      {currentProfile.name}
+                      {currentProfile?.name}
                     </p>
                     <p className="text-[18px] truncate">
-                      @{currentProfile.username}
+                      @{currentProfile?.name}
                     </p>
                   </div>
                 ) : (
@@ -76,8 +76,8 @@ export default function Profile({ params }: profilePageCompTypes) {
                 )}
               </ClientOnly>
 
-              {true ? (
-                <button className="border hover:bg-gray-100 flex items-center rounded-md py-1.5 mt-3 px-3.5 font-semibold text-[13px]">
+              {contextUser?.user?.id == params?.id ? (
+                <button onClick={() => setIsEditProfileOpen(!isEditProfileOpen)} className="border hover:bg-gray-100 flex items-center rounded-md py-1.5 mt-3 px-3.5 font-semibold text-[13px]">
                   <BsPencil className="mt-0.5 mr-1" size={18} />
                   <span>Edit Profile</span>
                 </button>
@@ -91,11 +91,11 @@ export default function Profile({ params }: profilePageCompTypes) {
           <div className="flex items-center pt-4">
             <div className="mr-4 flex items-center gap-2">
               <p className="font-semibold text-gray-500">
-                {formatNumber(currentProfile?.following)}
+                {formatNumber(currentProfile?.following) || 0}
                 <span className="font-light"> Following</span>
               </p>
               <p className="font-semibold ">
-                {formatNumber(currentProfile?.followers)}{" "}
+                {formatNumber(currentProfile?.followers) || 0}{" "}
                 <span className="font-light">Followers</span>
               </p>
               <p className="font-semibold ">
@@ -124,17 +124,13 @@ export default function Profile({ params }: profilePageCompTypes) {
 
           <ClientOnly>
             <div className="grid mt-3 2xl:grid-cols-6 xl:grid-cols-5  lg:grid-cols-4  md:grid-cols-3 grid-cols-2 gap-3">
+              {postsByUser?.map((post, index) => (
+
               <PostUser
-                post={{
-                  id: "123",
-                  user_id: "456",
-                  video_url:
-                    "https://cdn.pixabay.com/vimeo/849610807/ocean-173530.mp4?width=360&hash=de6ae525ac689219f1ab32778c2da557e12a4070",
-                  text: "this is some description for this app jfdosjf",
-                  views: 100000,
-                  created_at: "2024-07-01",
-                }}
+                post={post}
+                key={index}
               />
+              ))}
             </div>
           </ClientOnly>
         </div>

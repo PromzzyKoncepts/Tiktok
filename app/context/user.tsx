@@ -49,7 +49,7 @@ const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     password: string
   ) => {
     try {
-      const promise = await account.create(ID.unique(), email, password, name);
+      const promise = await account.create(ID.unique(), email, password, name,);
       await account.createEmailSession(email, password);
 
       await useCreateProfile(
