@@ -3,56 +3,37 @@ import React, { useState } from "react";
 import ClientOnly from "../ClientOnly";
 import SingleComment from "./SingleComment";
 import { BiLoaderCircle } from "react-icons/bi";
+import { useCommentStore } from "@/app/store/comment";
+import { useUser } from "@/app/context/user";
+import { useGeneralStore } from "@/app/store/General";
+import useCreateComment from "@/app/hooks/useCreateComment";
 
 const Comments = ({ params }: CommentsCompTypes) => {
+  let {commentsByPost, setCommentsByPost} = useCommentStore()
+  let {setIsLoginOpen} = useGeneralStore()
+  const contextUser = useUser()
+
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const [inputFocused, setInputFocused] = useState<boolean>(false);
 
-  const commentsByPost = [
-    {
-      id: "123",
-      user_id: "456",
-      post_id: "789",
-      text: "this is some comment",
-      created_at: "2024-07-01",
-      profile: {
-        user_id: "456",
-        name: "Promise Okechukwu",
-        username: "pr0mzzy",
-        image: "https://placehold.co/100",
-      },
-    },
-    {
-      id: "123",
-      user_id: "456",
-      post_id: "789",
-      text: "this is some comment",
-      created_at: "2024-07-01",
-      profile: {
-        user_id: "456",
-        name: "Promise Okechukwu",
-        username: "pr0mzzy",
-        image: "https://placehold.co/100",
-      },
-    },
-    {
-      id: "123",
-      user_id: "456",
-      post_id: "789",
-      text: "this is some comment",
-      created_at: "2024-07-01",
-      profile: {
-        user_id: "456",
-        name: "Promise Okechukwu",
-        username: "pr0mzzy",
-        image: "https://placehold.co/100",
-      },
-    },
-  ];
 
-  const addComment = () => {
-    console.log('comment added');
+  const addComment = async () => {
+    if(!contextUser?.user) {
+      return setIsLoginOpen(true)
+    }
+    try{
+      setIsUploading(true),
+      await useCreateComment(contextUser?.user?.id, params?.postId, comment)
+      setCommentsByPost(params?.postId)
+      setComment('')
+      setIsUploading(false)
+
+    }catch(error) {
+      throw error
+      console.error(error)
+    }
+    
     
   }
   return (
