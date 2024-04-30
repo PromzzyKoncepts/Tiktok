@@ -238,7 +238,7 @@ const EditProfileOverlay = () => {
                   <Cropper
                     stencilProps={{ aspectRatio: 1, lines: false }} // remove this to make it croppable in any ratio
                     className="h-[400px] "
-                    onChange={(cropper) => setCropper(cropper.getCanvas())}
+                    onChange={(cropper) => setCropper(cropper.getCoordinates())}
                     src={uploadedImage}
                   />
                 </div>

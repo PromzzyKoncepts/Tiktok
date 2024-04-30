@@ -22,7 +22,7 @@ const useChangeUserImage = async (file: File, cropper: any, currentImage: string
         const result = await storage.createFile(String(process.env.NEXT_PUBLIC_BUCKET_ID), videoId, finalFile);
 
         // if current image is not default image delete
-        // if (currentImage != String(process.env.NEXT_PUBLIC_PLACEHOLDER_DEFAULT_IMAGE_ID)) {
+        // if (currentImage != String(process.env.NEXT_PUBLIC_PLACEHOLDER_DEAFULT_IMAGE_ID)) {
         //     await storage.deleteFile(String(process.env.NEXT_PUBLIC_BUCKET_ID), currentImage);
         // }
 
