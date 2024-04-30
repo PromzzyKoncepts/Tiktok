@@ -1,24 +1,106 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Comment, Like, postMainLikesCompTypes } from "../types";
 import { AiFillHeart } from "react-icons/ai";
 import { BiLoaderCircle } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { FaBookmark, FaCommentDots, FaShare } from "react-icons/fa";
 import { IoMdShareAlt } from "react-icons/io";
+import { useUser } from "../context/user";
+import { useGeneralStore } from "../store/General";
+import useGetCommentsByPostId from "../hooks/useGetCommentsByPostId";
+import useGetLikesByPostId from "../hooks/useGetLikesByPostId";
+import useIsLiked from "../hooks/useIsLiked";
+import useCreateLike from "../hooks/useCreateLike";
+import useDeleteLike from "../hooks/useDeleteLike";
 
 export default function PostMainLikes({ post }: postMainLikesCompTypes) {
   
   const router = useRouter()
+  let {setIsLoginOpen} = useGeneralStore()
+  const contextUser = useUser()
 
-
-  const [hasClickedLike, setHasCLickedLike] = useState<boolean>(false)
+  const [hasClickedLike, setHasClickedLike] = useState<boolean>(false)
   const [likes, setLikes] = useState<Like[]>([])
   const [comments, setComments] = useState<Comment[]>([])
   const [userLiked, setUserLiked] = useState<boolean>(false)
 
-  const likeOrUnlike = () => {
+  useEffect(() => {
+    getAllLikesByPost()
+    getAllCommentsByPost()
+  }, [post])
 
+  useEffect(() => {
+    hasUserLikedPost()
+  }, [likes, contextUser])
+
+  const hasUserLikedPost = () => {
+    if(!contextUser){
+      return
+    }
+
+    if(likes.length < 1 || !contextUser?.user?.id){
+      setUserLiked(false)
+      return
+    }
+
+    let res = useIsLiked(contextUser?.user?.id, post?.id, likes)
+    setUserLiked(res? true : false)
   }
+  
+  
+    const getAllCommentsByPost = async() => {
+      let result = await useGetCommentsByPostId(post?.id)
+      setComments(result)
+    }
+    const getAllLikesByPost = async() => {
+      let result = await useGetLikesByPostId(post?.id)
+      setLikes(result)
+    }
+
+
+  const like = async () => {
+    try{
+      setHasClickedLike(true)
+      await useCreateLike(contextUser?.user?.id || '', post?.id, )
+      await getAllLikesByPost()
+      hasUserLikedPost()
+      setHasClickedLike(false)
+    }catch(error){
+      console.error(error)
+      setHasClickedLike(false)
+    }
+  }
+  
+  const unlike = async (id:string) => {
+    try{
+      setHasClickedLike(true)
+      await useDeleteLike(id)
+      await getAllLikesByPost()
+      hasUserLikedPost()
+      setHasClickedLike(false)
+    }catch(error){
+      console.error(error)
+      setHasClickedLike(false)
+    }
+  }
+
+
+  const likeOrUnlike = () => {
+    if(!contextUser?.user?.id) return setIsLoginOpen(true)
+      let res = useIsLiked(contextUser?.user?.id, post?.id, likes)
+    if(!res){
+      like()
+    }else{
+      likes.forEach(like => {
+        if(contextUser?.user?.id && contextUser.user.id == like.user_id && like.post_id == post?.id){
+          unlike(like.id)
+        }
+      })
+    }
+  };
+
+
+ 
 
 
   function formatNumber(num:number, precision:number = 2) {
@@ -52,7 +134,7 @@ export default function PostMainLikes({ post }: postMainLikesCompTypes) {
             )}
 
           </button>
-          <span className="text-xs text-gray-800 font-semibold">{formatNumber(likes?.length, 2)}</span>
+          <span className="text-xs text-gray-800 font-semibold">{formatNumber(likes?.length, 0)}</span>
         </div>
 
         <button className="pb-4 text-center" onClick={() => router.push(`/post/${post?.id}/${post?.profile?.user_id}`)}>
@@ -60,7 +142,7 @@ export default function PostMainLikes({ post }: postMainLikesCompTypes) {
                 <FaCommentDots size={20} />
               </div>
                 <span className="text-xs text-gray-800 font-semibold">
-                  {formatNumber(comments?.length, 2)}
+                  {formatNumber(comments?.length, 0)}
                 </span>
         </button>
 
@@ -71,7 +153,7 @@ export default function PostMainLikes({ post }: postMainLikesCompTypes) {
                 <FaBookmark size={20} />
               </div>
                 <span className="text-xs text-gray-800 font-semibold">
-                  {formatNumber(comments?.length, 2)}
+                  {0}
                 </span>
         </button>
 
@@ -82,7 +164,7 @@ export default function PostMainLikes({ post }: postMainLikesCompTypes) {
                 <IoMdShareAlt size={25} />
               </div>
                 <span className="text-xs text-gray-800 font-semibold">
-                  {formatNumber(comments?.length, 2)}
+                  {0}
                 </span>
         </button>
       </div>
