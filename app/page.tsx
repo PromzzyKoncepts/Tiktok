@@ -14,11 +14,10 @@ export default function Home() {
   return (
     <>
       <MainLayout>
-        <div className="mt-[80px] w -[calc(100%-90px)] min-w-[33%] mx-auto">
+        <div className="mt-[60px] w -[calc(100%-90px)] min-w-[33%] mx-auto">
           <ClientOnly>
             {allPosts.map((post, index) => (
               <PostMain post={post} key={index} />
-
             ))}
             
           </ClientOnly>

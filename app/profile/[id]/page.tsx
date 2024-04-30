@@ -93,7 +93,7 @@ export default function Profile({ params }: profilePageCompTypes) {
             <div className="mr-4 flex items-center gap-2">
               <p className="font-semibold text-gray-500">
                 {0}
-                <span className="font-light"> Following</span>
+                <span className="font-light">Following</span>
               </p>
               <p className="font-semibold ">
                 {0} <span className="font-light">Followers</span>
