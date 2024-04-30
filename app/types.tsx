@@ -111,7 +111,6 @@ export interface Post2 {
   video_url: string;
   text: string;
   created_at: string;
-  views:number
 }
 
 export interface CommentWithProfile {

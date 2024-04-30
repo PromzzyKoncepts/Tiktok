@@ -67,7 +67,7 @@ const PostUser = ({ post }: PostUserCompTypes) => {
                 size={20}
                 color="#ffffff"
               />
-            <div>{formatNumber(post.views, 0)}</div>
+            {/* <div>{formatNumber(post.views, 0)}</div> */}
           </div>
         </Link>
       )}
