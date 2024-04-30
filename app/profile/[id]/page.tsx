@@ -14,15 +14,14 @@ import { profilePageCompTypes } from "@/app/types";
 import UseCreateBucketUrl from "@/app/hooks/useCreateBucketUrl";
 
 export default function Profile({ params }: profilePageCompTypes) {
-  
-  const contextUser = useUser()
-  let {postsByUser, setPostsByUser} = usePostStore()
-  let {currentProfile, setCurrentProfile} = useProfileStore()
-  let {isEditProfileOpen, setIsEditProfileOpen} = useGeneralStore()
+  const contextUser = useUser();
+  let { postsByUser, setPostsByUser } = usePostStore();
+  let { currentProfile, setCurrentProfile } = useProfileStore();
+  let { isEditProfileOpen, setIsEditProfileOpen } = useGeneralStore();
   useEffect(() => {
-    setCurrentProfile(params?.id)
-    setPostsByUser(params?.id)
-  }, [])
+    setCurrentProfile(params?.id);
+    setPostsByUser(params?.id);
+  }, []);
 
   function formatNumber(num: number, precision: number = 1) {
     const map = [
@@ -35,8 +34,7 @@ export default function Profile({ params }: profilePageCompTypes) {
 
     const found = map.find((x) => Math.abs(num) >= x.threshold);
     if (found) {
-      const formatted =
-        (num / found.threshold).toFixed(precision) + found.suffix;
+      const formatted = (num / found.threshold).toFixed(precision) + found.suffix;
       return formatted;
     }
 
@@ -77,7 +75,10 @@ export default function Profile({ params }: profilePageCompTypes) {
               </ClientOnly>
 
               {contextUser?.user?.id == params?.id ? (
-                <button onClick={() => setIsEditProfileOpen(!isEditProfileOpen)} className="border hover:bg-gray-100 flex items-center rounded-md py-1.5 mt-3 px-3.5 font-semibold text-[13px]">
+                <button
+                  onClick={() => setIsEditProfileOpen(!isEditProfileOpen)}
+                  className="border hover:bg-gray-100 flex items-center rounded-md py-1.5 mt-3 px-3.5 font-semibold text-[13px]"
+                >
                   <BsPencil className="mt-0.5 mr-1" size={18} />
                   <span>Edit Profile</span>
                 </button>
@@ -91,16 +92,14 @@ export default function Profile({ params }: profilePageCompTypes) {
           <div className="flex items-center pt-4">
             <div className="mr-4 flex items-center gap-2">
               <p className="font-semibold text-gray-500">
-                {formatNumber(currentProfile?.following) || 0}
+                {0}
                 <span className="font-light"> Following</span>
               </p>
               <p className="font-semibold ">
-                {formatNumber(currentProfile?.followers) || 0}{" "}
-                <span className="font-light">Followers</span>
+                {0} <span className="font-light">Followers</span>
               </p>
               <p className="font-semibold ">
-                {formatNumber(currentProfile?.totalLikes || 0)}{" "}
-                <span className="font-light">Likes</span>
+                {0} <span className="font-light">Likes</span>
               </p>
             </div>
           </div>
@@ -125,11 +124,7 @@ export default function Profile({ params }: profilePageCompTypes) {
           <ClientOnly>
             <div className="grid mt-3 2xl:grid-cols-6 xl:grid-cols-5  lg:grid-cols-4  md:grid-cols-3 grid-cols-2 gap-3">
               {postsByUser?.map((post, index) => (
-
-              <PostUser
-                post={post}
-                key={index}
-              />
+                <PostUser post={post} key={index} />
               ))}
             </div>
           </ClientOnly>
