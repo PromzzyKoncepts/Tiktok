@@ -7,8 +7,11 @@ import { FcGoogle } from "react-icons/fc";
 import UseGetProfileByUserId from "@/app/hooks/useGetProfileByUserId";
 import { useUser } from "@/app/context/user";
 import { useRouter } from "next/navigation";
+import { useGeneralStore } from "@/app/store/General";
+
 
 const Register = () => {
+  let {setIsLoginOpen} = useGeneralStore()
 
   const router = useRouter()
 
@@ -73,7 +76,7 @@ const Register = () => {
       setLoading(true)
       await contextUser.register(name, username, email, password)
       setLoading(false)
-      // setIsLoginOpen(false)
+      setIsLoginOpen(false)
       router.refresh()
     }
     catch(error) {
