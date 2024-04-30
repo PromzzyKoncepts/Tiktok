@@ -35,7 +35,7 @@ export interface showErrorObject {
 // ///////////////////////////
 // COMPONENT TYPES
 
-export interface PostWithProfile {
+export interface PostWithProfile2 {
   id: string;
   user_id: string;
   video_url: string;
@@ -45,6 +45,18 @@ export interface PostWithProfile {
     user_id: string;
     name: string;
     username: string;
+    image: string;
+  };
+}
+export interface PostWithProfile {
+  id: string;
+  user_id: string;
+  video_url: string;
+  text: string;
+  created_at: string;
+  profile: {
+    user_id: string;
+    name: string;
     image: string;
   };
 }
@@ -90,8 +102,16 @@ export interface Post {
   user_id: string;
   video_url: string;
   text: string;
-  views: number;
   created_at: string;
+}
+
+export interface Post2 {
+  id: string;
+  user_id: string;
+  video_url: string;
+  text: string;
+  created_at: string;
+  views:number
 }
 
 export interface CommentWithProfile {
@@ -105,6 +125,23 @@ export interface CommentWithProfile {
       name: string;
       image: string;
   }
+}
+
+
+export interface User { 
+  id: string;
+  name: string;
+  bio: string;
+  image: string;
+}
+
+
+export interface Profile { 
+  id: string;
+  user_id: string;
+  name: string;
+  bio: string;
+  image: string;
 }
 export interface Like {
   id: string;
@@ -121,7 +158,7 @@ export interface Comment {
 }
 
 export interface MenuItemFollowCompTypes {
-  user: RandomUsers2;
+  user: RandomUsers;
 }
 
 export interface UploadError {
@@ -141,7 +178,7 @@ export interface postPageTypes {
 }
 
 export interface PostUserCompTypes {
-  post: Post;
+  post: Post2;
 }
 
 export interface TextInputCompTypes {
@@ -157,17 +194,10 @@ export interface TextInputCompTypes {
 
 // CONTEXT TYPES
 export interface UserContextTypes {
-  user: User | null,
+  user: User | null;
   register: (name: string, email: string, username: string, password: string) => Promise<void>,
   login: ( email: string,  password: string) => Promise<void>,
   logout: () => Promise<void>,
   checkUser: () => Promise<void>,
   
-}
-
-export interface User { 
-  id: string,
-  name: string,
-  bio: string,
-  image: string,
 }
