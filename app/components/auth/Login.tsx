@@ -5,9 +5,11 @@ import { BiLoaderCircle } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaLinkedin } from "react-icons/fa";
 import { useUser } from "@/app/context/user";
+import { useGeneralStore } from "@/app/store/General";
 
 const Login = () => {
   const contextUser = useUser()
+  let {setIsLoginOpen} = useGeneralStore()
 
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string | "">("");
@@ -51,7 +53,7 @@ const Login = () => {
       setLoading(true);
       await contextUser.login(email, password);
       setLoading(false);
-      // setIsLoginOpen(false)
+      setIsLoginOpen(false)
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -96,7 +98,7 @@ const Login = () => {
               <BiLoaderCircle
                 size={23}
                 className="animate-spin"
-                color="#f02c56"
+                color="#ffffff"
               />
             ) : (
               "Log In"
