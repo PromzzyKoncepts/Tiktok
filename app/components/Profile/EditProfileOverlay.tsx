@@ -191,7 +191,7 @@ const EditProfileOverlay = () => {
 
                         <p
                           className={`relative text-gray-500 text-sm ${
-                            error ? "mt-1" : "mt-1"
+                            error ? "mt-1" : "mt-1.5"
                           }`}
                         >
                           Username can only contain letters, numbers,
@@ -238,7 +238,7 @@ const EditProfileOverlay = () => {
                   <Cropper
                     stencilProps={{ aspectRatio: 1, lines: false }} // remove this to make it croppable in any ratio
                     className="h-[400px] "
-                    onChange={(cropper) => setCropper(cropper.getCanvas())}
+                    onChange={(cropper) => setCropper(cropper.getCoordinates())}
                     src={uploadedImage}
                   />
                 </div>

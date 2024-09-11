@@ -31,7 +31,7 @@ export default function PostMain({ post }: postMainCompTypes) {
 
   return (
     <>
-      <div id={`PostMain-${post.id}`} className="flex  border-b py-6">
+      <div id={`PostMain-${post.id}`} className="flex border-b py-6 pl-20 md:pl-0">
         <div className="cursor-pointer">
           <img
             src={
@@ -44,13 +44,13 @@ export default function PostMain({ post }: postMainCompTypes) {
           />
         </div>
 
-        <div className="pl-3 px-4 w-full">
-          <div className="flex justify-between items-center pb-0.5">
+        <div className="pl-3 w-full">
+          <div className="flex gap-20 md:justify-between items-center pb-0.5">
             <Link href={`/profile/${post?.profile?.user_id}`}>
               <span className="cursor-pointer">{post.profile.name}</span>
             </Link>
 
-            <button className="border text-[15px] px-[21px] py-0.5 border-[#F02C56] text-[#F02C56] hover:bg-[#ffeef2] font-semibold rounded-md">
+            <button className="border text-[15px] px-[15px] md:px-[21px] py-0.5 border-[#F02C56] text-[#F02C56] hover:bg-[#ffeef2] font-semibold rounded-md">
               Follow
             </button>
           </div>
